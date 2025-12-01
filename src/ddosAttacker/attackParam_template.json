@@ -1,0 +1,90 @@
+{
+    "TEST": {
+        "type": "TEST",
+        "targetSum" : "localhost:3000"
+    },
+
+    "SSH": {
+        "cmdlines": [
+            "ls",
+            "pwd",
+            "ip a",
+            "who",
+            "ps"
+        ],
+        "ipaddress": "****",
+        "username": "****",
+        "password": "****",
+        "cmdinterval": 0.01,
+        "targetSum" : "****"
+    },
+
+    "URL": {
+        "type": "url",
+        "urlList": [
+            "https://****/"
+        ],
+        "targetSum" : "https://****/"
+    },
+
+    "URL2": {
+        "type": "req",
+        "urlList": [
+            {
+                "url": "https://****.typicode.com/posts/",
+                "type": "get",
+                "parm": {
+                    "id": [ 1, 2, 3 ],
+                    "userId": 1
+                }
+            },
+            {
+                "url": "https://****.typicode.com/posts",
+                "type": "post",
+                "parm": {
+                    "userID": 1,
+                    "id": 1,
+                    "title": "Making a POST request",
+                    "body": "This is the data we created."
+                }
+            }
+        ],
+        "targetSum" : "https://****"
+    },
+
+    "NTP": { 
+        "urlList": [ "0.****.ntp.org"],
+        "targetSum" : "****.ntp.org"
+    },
+
+    "FTP":{
+        "urlList":["ftp.****.org"],
+        "targetSum" : "ftp.****.org"
+    },
+
+    "UDP":{
+        "ipaddress": "127.0.0.1",
+        "port": 3003,
+        "respFlg": true,
+        "msg" : [
+            "udp-test-message 1",
+            "udp-test-message 2",
+            "udp-test-message 3",
+            "udp-test-message 4"
+        ],
+        "targetSum" : "localhost:3003"
+    },
+
+    "TCP":{
+        "ipaddress": "127.0.0.1",
+        "port": 3004,
+        "respFlg": true,
+        "msg" : [
+            "tcp-test-message 1",
+            "tcp-test-message 2",
+            "tcp-test-message 3",
+            "tcp-test-message 4"
+        ],
+        "targetSum" : "localhost:3004"
+    }
+}

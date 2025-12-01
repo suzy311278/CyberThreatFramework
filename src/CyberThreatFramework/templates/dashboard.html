@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Threat Simulation Framework</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #d32f2f;
+            --dark-red: #b71c1c;
+            --light-bg: #f5f5f5;
+            --white: #ffffff;
+            --text-dark: #212121;
+            --text-grey: #757575;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--white) !important;
+            border-bottom: 3px solid var(--primary-red);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-red) !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            color: var(--text-dark) !important;
+            font-weight: 500;
+        }
+
+        .nav-link.active {
+            color: var(--primary-red) !important;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: var(--white);
+            border-bottom: 2px solid var(--primary-red);
+            color: var(--dark-red);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 15px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-red);
+            border-color: var(--primary-red);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-red);
+            border-color: var(--dark-red);
+        }
+
+        /* Terminal */
+        .log-terminal {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Monaco', monospace;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        /* Stats */
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        .stat-label {
+            color: var(--text-grey);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--text-dark);
+        }
+
+        .table thead th {
+            border-bottom: 2px solid var(--primary-red);
+            color: var(--dark-red);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        /* Badges */
+        .mitre-badge {
+            background-color: var(--dark-red);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 0.8em;
+        }
+
+        /* Live Indicator */
+        .live-indicator {
+            color: var(--primary-red);
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-shield-alt me-2"></i>ThreatSim<span
+                    class="text-dark">Pro</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#"
+                            onclick="showSection('dashboard')">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"
+                            onclick="showSection('simulation')">Simulations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('catalog')">Knowledge
+                            Base</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('guide')"><i
+                                class="fas fa-book-open me-1"></i>Guide</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section-content">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h4 class="text-secondary">Security Operations Center</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Metrics -->
+                <div class="col-md-3">
+                    <div class="card stat-card text-center p-4">
+                        <div class="stat-number" id="total-events">0</div>
+                        <div class="stat-label">Total Incidents</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card text-center p-4">
+                        <div class="stat-number" id="attack-types-count">0</div>
+                        <div class="stat-label">Attack Vectors</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card text-center p-4">
+                        <div class="stat-number text-danger" id="active-sims">0</div>
+                        <div class="stat-label">Active Threats</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card text-center p-4">
+                        <div class="stat-number text-success"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-label">System Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            Attack Chain Visualization
+                        </div>
+                        <div class="card-body text-center d-flex align-items-center justify-content-center"
+                            style="min-height: 350px; background-color: #fff;">
+                            <img src="/logs/attack_flow.png" class="img-fluid" alt="No Data Available"
+                                onerror="this.style.display='none'">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">Recent Activity Log</div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" id="recent-activity-list">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">Detailed Event Audit</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-hover mb-0 table-sm" id="full-log-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Module</th>
+                                            <th>Event</th>
+                                            <th>Details</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Section -->
+        <div id="simulation-section" class="section-content" style="display:none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Simulation Configuration</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="startTour()" title="Help">
+                                <i class="fas fa-question-circle"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <form id="sim-form">
+                                <div class="mb-3">
+                                    <label class="form-label text-secondary fw-bold small">TARGET IP ADDRESS</label>
+                                    <input type="text" class="form-control" id="target-ip" value="192.168.1.50">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-secondary fw-bold small">ATTACK VECTOR</label>
+                                    <select class="form-select" id="attack-tool">
+                                        <option value="scan">Network Scanning (T1046)</option>
+                                        <option value="bruteforce">SSH Brute Force (T1110)</option>
+                                        <option value="ransomware">Ransomware (T1486)</option>
+                                        <option value="plc">ICS/PLC Manipulation (T0831)</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100" onclick="runSimulation()">
+                                    <i class="fas fa-play me-2"></i>Execute Simulation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">Scenario Info</div>
+                        <div class="card-body">
+                            <div id="scenario-desc" class="small text-muted">
+                                Select an attack vector above to begin.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between">
+                            <span>Live Console Output</span>
+                            <span class="live-indicator"><i class="fas fa-circle small"></i> LIVE</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="log-terminal" id="sim-terminal">
+                                <div class="text-muted">// System Ready. Waiting for command...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Catalog Section -->
+        <div id="catalog-section" class="section-content" style="display:none;">
+            <div class="card">
+                <div class="card-header">MITRE ATT&CK Knowledge Base</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0" id="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Mitigation</th>
+                                <th>Reference</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attack in catalog %}
+                            <tr>
+                                <td><span class="mitre-badge">{{ attack.id }}</span></td>
+                                <td><strong>{{ attack.name }}</strong></td>
+                                <td>{{ attack.description }}</td>
+                                <td><small class="text-muted">{{ attack.mitigation }}</small></td>
+                                <td>
+                                    <a href="https://attack.mitre.org/techniques/{{ attack.id }}/" target="_blank"
+                                        class="btn btn-sm btn-link text-danger text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1"></i>MITRE
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        onclick="launchSpecific('{{ attack.tool }}')">Simulate</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide Section -->
+        <div id="guide-section" class="section-content" style="display:none;">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-book me-2"></i>Operator's Manual</span>
+                            <button class="btn btn-sm btn-primary" onclick="startTour()">
+                                <i class="fas fa-walking me-2"></i>Start Interactive Tour
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="text-danger mb-3">Welcome to ThreatSimPro</h4>
+                            <p>This framework is a professional Cyber Threat Simulation tool designed to model, execute,
+                                and analyze cyber attacks in a controlled environment. It helps security professionals
+                                understand attack vectors and validate defense mechanisms.</p>
+
+                            <hr>
+
+                            <h5 class="text-dark mt-4"><i class="fas fa-list-ol me-2"></i>How to Use</h5>
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1 text-danger">1. Monitor Status</h6>
+                                    </div>
+                                    <p class="mb-1 small text-muted">Check the <strong>Dashboard</strong> for global
+                                        threat metrics, recent activity logs, and the visual attack chain.</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1 text-danger">2. Execute Simulations</h6>
+                                    </div>
+                                    <p class="mb-1 small text-muted">Go to the <strong>Simulations</strong> tab. Select
+                                        an attack vector (e.g., Ransomware, PLC Attack) and a target IP. Click "Execute"
+                                        to start the attack engine.</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1 text-danger">3. Analyze Results</h6>
+                                    </div>
+                                    <p class="mb-1 small text-muted">Watch the <strong>Live Terminal</strong> for
+                                        real-time feedback. Once complete, a "Compromise Detected" report will appear
+                                        with remediation steps.</p>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <h5 class="text-dark mt-4"><i class="fas fa-microchip me-2"></i>System Architecture</h5>
+                            <p class="small text-muted">
+                                <strong>Frontend:</strong> Web Dashboard (HTML/JS/Bootstrap)<br>
+                                <strong>Backend:</strong> Flask Server (Python)<br>
+                                <strong>Engine:</strong> Modular Python Scripts (Scapy, Paramiko, Cryptography)<br>
+                                <strong>Visualization:</strong> Matplotlib & NetworkX
+                            </p>
+                            <div class="alert alert-light border mt-3">
+                                <strong>Note:</strong> All attacks are simulated safely. "Ransomware" only encrypts
+                                files in a dummy directory.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Remediation Modal -->
+    <div class="modal fade" id="remediationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Compromise Detected</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="modal-attack-name" class="text-danger">Attack Name</h4>
+                    <p id="modal-compromise" class="lead border-bottom pb-3">How it happened...</p>
+
+                    <h5 class="text-success mt-3"><i class="fas fa-shield-alt me-2"></i>Remediation & Defense</h5>
+                    <div id="modal-mitigation" class="p-3 bg-light rounded border border-success text-dark">
+                        Steps to fix...
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger"
+                        onclick="showSection('dashboard'); data-bs-dismiss('modal');">View Analysis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+
+    <script>
+        // Data passed from Flask
+        const catalogData = {{ catalog | tojson }};
+
+        const driverObj = window.driver.js.driver({
+            showProgress: true,
+            steps: [
+                { element: '.navbar-brand', popover: { title: 'ThreatSimPro', description: 'Welcome to your Cyber Threat Simulation Framework.' } },
+                {
+                    element: '.nav-link[onclick="showSection(\'dashboard\')"]',
+                    popover: { title: 'Dashboard', description: 'View global statistics and recent attack activity here.' },
+                    onHighlightStarted: () => showSection('dashboard')
+                },
+                {
+                    element: '.nav-link[onclick="showSection(\'simulation\')"]',
+                    popover: { title: 'Simulations Tab', description: 'This is where you launch attacks. Let\'s take a look inside.' }
+                },
+                {
+                    element: '#target-ip',
+                    popover: { title: 'Target Configuration', description: 'Enter the IP address of the system you want to test.' },
+                    onHighlightStarted: () => showSection('simulation')
+                },
+                { element: '#attack-tool', popover: { title: 'Select Weapon', description: 'Choose from available attack vectors like Ransomware, Brute Force, or PLC Attacks.' } },
+                { element: '#sim-form button', popover: { title: 'Execute', description: 'Click this button to initiate the selected attack sequence.' } },
+                { element: '#sim-terminal', popover: { title: 'Live Terminal', description: 'Watch the attack progress in real-time. You will see hacker-style output here.' } },
+                {
+                    element: '.nav-link[onclick="showSection(\'catalog\')"]',
+                    popover: { title: 'Knowledge Base', description: 'Explore the MITRE ATT&CK database and learn about threats.' },
+                    onHighlightStarted: () => showSection('catalog')
+                },
+                {
+                    element: '.nav-link[onclick="showSection(\'guide\')"]',
+                    popover: { title: 'Guide', description: 'Return here anytime for help or to restart this tour.' },
+                    onHighlightStarted: () => showSection('guide')
+                }
+            ]
+        });
+
+        function startTour() {
+            driverObj.drive();
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            document.getElementById(sectionId + '-section').style.display = 'block';
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            // Find the link that calls this function with this sectionId
+            const activeLink = document.querySelector(`.nav-link[onclick="showSection('${sectionId}')"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            if (sectionId === 'dashboard') loadStats();
+        }
+
+        async function loadStats() {
+            const response = await fetch('/api/stats');
+            const data = await response.json();
+            document.getElementById('total-events').innerText = data.total_events;
+            document.getElementById('attack-types-count').innerText = data.attack_types;
+
+            const list = document.getElementById('recent-activity-list');
+            list.innerHTML = '';
+            data.recent_events.forEach(evt => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item border-0 border-bottom';
+                li.innerHTML = `<small class="text-muted" style="font-size:0.75em">${evt.Timestamp.split('T')[1].split('.')[0]}</small><br><strong class="text-dark">${evt.Module}</strong>: ${evt.Event}`;
+                list.appendChild(li);
+            });
+
+            // Full Logs
+            const logResponse = await fetch('/api/logs');
+            const logs = await logResponse.json();
+            const logTable = document.querySelector('#full-log-table tbody');
+            logTable.innerHTML = '';
+            logs.forEach(log => {
+                const row = `<tr>
+                    <td>${log.Timestamp.split('T')[1].split('.')[0]}</td>
+                    <td><span class="fw-bold text-dark">${log.Module}</span></td>
+                    <td>${log.Event}</td>
+                    <td><span class="text-muted small">${log.Details}</span></td>
+                    <td><span class="${log.Status == 'ERROR' ? 'text-danger' : 'text-success'} fw-bold">${log.Status}</span></td>
+                </tr>`;
+                logTable.innerHTML += row;
+            });
+
+            // Refresh images
+            document.querySelectorAll('img').forEach(img => {
+                const src = img.src.split('?')[0];
+                img.src = src + '?' + new Date().getTime();
+            });
+        }
+
+        async function runSimulation() {
+            const tool = document.getElementById('attack-tool').value;
+            const target = document.getElementById('target-ip').value;
+            const term = document.getElementById('sim-terminal');
+
+            term.innerHTML = '';
+            term.innerHTML += `<div>> INITIALIZING ${tool.toUpperCase()} SEQUENCE...</div>`;
+            term.innerHTML += `<div>> TARGET: ${target}</div>`;
+            term.innerHTML += `<div>> --------------------------------</div>`;
+
+            const response = await fetch('/api/simulate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool: tool, target: target })
+            });
+
+            const res = await response.json();
+            if (res.status === 'success') {
+                startMonitoring(tool);
+            }
+        }
+
+        let monitorInterval;
+        function startMonitoring(tool) {
+            clearInterval(monitorInterval);
+            const term = document.getElementById('sim-terminal');
+            monitorInterval = setInterval(async () => {
+                const response = await fetch('/api/monitor');
+                const data = await response.json();
+
+                // Only append new lines would be better, but for now full refresh is safer for sync
+                term.innerHTML = '';
+                data.output.forEach(line => {
+                    term.innerHTML += `<div>${line}</div>`;
+                });
+                term.scrollTop = term.scrollHeight;
+
+                if (data.output.length > 0 && data.output[data.output.length - 1].includes('Simulation Complete')) {
+                    clearInterval(monitorInterval);
+                    showRemediation(tool);
+                }
+            }, 800);
+        }
+
+        function showRemediation(tool) {
+            const attackInfo = catalogData.find(a => a.tool === tool);
+            if (attackInfo) {
+                document.getElementById('modal-attack-name').innerText = attackInfo.name + " (" + attackInfo.id + ")";
+                document.getElementById('modal-compromise').innerText = attackInfo.compromise || "System compromised.";
+                document.getElementById('modal-mitigation').innerText = attackInfo.mitigation || "No mitigation data available.";
+
+                const modal = new bootstrap.Modal(document.getElementById('remediationModal'));
+                modal.show();
+            }
+        }
+
+        function launchSpecific(tool) {
+            showSection('simulation');
+            document.getElementById('attack-tool').value = tool;
+        }
+
+        // Init
+        loadStats();
+    </script>
+</body>
+
+</html>

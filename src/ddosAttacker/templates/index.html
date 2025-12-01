@@ -1,0 +1,86 @@
+{% extends 'mgmbase.html' %}
+
+{% block title %} DDoS Attack Control Hub {% endblock %}
+
+{% block style%}
+<style>
+  /* Make the image fully responsive 
+  .carousel-inner img {
+    width: 100%;
+    height: 50%;
+  }*/
+</style>
+
+{% endblock %}
+
+{% block mgmContent %}
+
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="pills-cr1-pro" role="tabpanel" aria-labelledby="pills-cr1-pro-tab">
+      <div class="table-responsive">
+
+          <table class="table table-dark">
+              <thead>
+                  <tr class="table table-danger">
+                      <th>Attacker ID </th>
+                      <th>DDoS Type </th>
+                      <th>Thread Num </th>
+                      <th>DDoS count/min </th>
+                      <th>Start Time </th>
+                      <th>Stop Time </th>
+                      <th style="width:  10%">Target</th>
+                      <th>Current State </th>
+                      <th>last Update </th>
+                      <th>Control </th>
+                  </tr>
+              </thead>
+              <tbody>
+
+                  {% for post in posts %}
+                  <tr class="info">
+                      <td> <b>{{ post['id'] }}</b> </td>
+                      <td> {{ post['type'] }} </td>
+                      <td> {{ post['threads'] }} </td>
+                      <td> {{ post['count'] }} / min</td>
+                      <td> <span class="badge badge-primary"> {{ post['startT'] }} </span> </td>
+                      <td> <span class="badge badge-primary"> {{ post['endT'] }} </span> </td>
+                      <td> {{ post['target'] }} </td>
+                      <td>
+                          {% if post['state'] == 0 %}
+                              <span class="badge badge-success"> Pause </span>
+                          {% else %}
+                              <span class="badge badge-danger"> Attacking  </span>  <div class="spinner-border spinner-border-sm text-danger"></div>
+                          {% endif %}
+                      </td>
+                      <td>
+                        <span class="badge badge-primary"> {{ post['updateT'] }} </span>
+                      </td>
+                      <td>
+                        <a href="#"> <span class="badge badge-danger"> Start </span></a>
+                          <a href="#"> <span class="badge badge-warning"> Pause </span></a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+
+      </div>
+      <a href="#">
+          <button type="button" class="btn btn-danger"> Start all attackers </button>
+      </a>
+      <a href="#">
+        <button type="button" class="btn btn-warning"> Pause all attackers </button>
+      </a>
+      <a href="#">
+          <button type="button" class="btn btn-success">[+] link to a new attacker </button>
+      </a>
+  </div>
+  <div class="tab-pane fade" id="pills-cr1-res" role="tabpanel" aria-labelledby="pills-cr1-res-tab">...</div>
+  <div class="tab-pane fade" id="pills-s17-cr2" role="tabpanel" aria-labelledby="pills-s17-cr2-tab">...</div>
+</div>
+
+<script>
+</script>
+
+
+{% endblock %}

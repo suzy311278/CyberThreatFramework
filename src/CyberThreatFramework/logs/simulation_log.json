@@ -1,0 +1,138 @@
+{"timestamp": "2025-12-01T20:04:21.360368", "module": "Ransomware", "event": "Start", "details": "Encrypting test_ransomware", "status": "INFO"}
+{"timestamp": "2025-12-01T20:04:21.361051", "module": "Ransomware", "event": "Encrypted", "details": "test_ransomware/secret.txt", "status": "INFO"}
+{"timestamp": "2025-12-01T20:04:21.361238", "module": "Ransomware", "event": "Encrypted", "details": "test_ransomware/data.txt", "status": "INFO"}
+{"timestamp": "2025-12-01T20:04:42.312952", "module": "Ransomware", "event": "Start", "details": "Decrypting test_ransomware", "status": "INFO"}
+{"timestamp": "2025-12-01T20:04:42.313669", "module": "Ransomware", "event": "Decrypted", "details": "test_ransomware/data.txt", "status": "INFO"}
+{"timestamp": "2025-12-01T20:04:42.313864", "module": "Ransomware", "event": "Decrypted", "details": "test_ransomware/secret.txt", "status": "INFO"}
+{"timestamp": "2025-12-01T20:05:10.289205", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:05:10.289309", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:05:10.289711", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:05:10.289842", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:05:10.289914", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:16:48.852256", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:16:48.852356", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:16:48.852750", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:16:48.852869", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:16:48.852925", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:16:48.852974", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:24.522197", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:24.522297", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:24.522681", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:17:24.522792", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:24.522846", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:24.522893", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:28.180884", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:28.180981", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:28.181363", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:17:28.181490", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:28.181555", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:17:28.181620", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:19:09.599730", "module": "Ransomware", "event": "Start", "details": "Encrypting /home/suzy/Python_Malwares_Repo/src/CyberThreatFramework/simulation_target", "status": "INFO"}
+{"timestamp": "2025-12-01T20:19:09.600343", "module": "Ransomware", "event": "Encrypted", "details": "/home/suzy/Python_Malwares_Repo/src/CyberThreatFramework/simulation_target/data.txt", "status": "INFO"}
+{"timestamp": "2025-12-01T20:21:12.503295", "module": "Ransomware", "event": "Start", "details": "Encrypting /home/suzy/Python_Malwares_Repo/src/CyberThreatFramework/simulation_target", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:18.509876", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:18.509988", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:18.510452", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:23:18.510582", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:18.510637", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:18.510684", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:51.638380", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:51.638492", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:51.638891", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:23:51.639033", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:51.639092", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:23:51.639140", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:24:26.678056", "module": "Ransomware", "event": "Start", "details": "Encrypting /home/suzy/Python_Malwares_Repo/src/CyberThreatFramework/simulation_target", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:23.507181", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:28.583783", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:29.584339", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 32] Broken pipe. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:26:31.671489", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:33.172130", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:33.173014", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:26:33.473325", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:33.773736", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:26:34.074162", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:03.579705", "module": "BruteForce", "event": "Start", "details": "Target: 127.0.0.1:22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:04.579918", "module": "BruteForce", "event": "Info", "details": "Running in SIMULATION mode (no real connection)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:04.580202", "module": "BruteForce", "event": "Attempt", "details": "Trying root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:05.380395", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:05.380671", "module": "BruteForce", "event": "Attempt", "details": "Trying root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:06.180903", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:06.181323", "module": "BruteForce", "event": "Attempt", "details": "Trying user/admin", "status": "INFO"}
+{"timestamp": "2025-12-01T20:27:07.381623", "module": "BruteForce", "event": "Success", "details": "Credentials found: user/admin", "status": "SUCCESS"}
+{"timestamp": "2025-12-01T20:27:07.381886", "module": "BruteForce", "event": "End", "details": "Credentials found", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:26.998933", "module": "PortScanner", "event": "Start", "details": "Scanning 127.0.0.1 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:28.499674", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:28.500790", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:31:28.801153", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:29.101668", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:29.402178", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:57.957616", "module": "PortScanner", "event": "Start", "details": "Scanning 192.168.1.50 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:59.458046", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:31:59.459118", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:32:00.760080", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:02.061049", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:02.863139", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:32.283072", "module": "PLC_Attack", "event": "Start", "details": "Targeting PLC at 192.168.1.50:502", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:34.083400", "module": "PLC_Attack", "event": "Recon", "details": "Identified Siemens S7-1200", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:35.684505", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40005 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:36.284825", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40006 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:36.885136", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40010 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:32:36.885376", "module": "PLC_Attack", "event": "Impact", "details": "Safety systems disabled, turbine overspeed", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:11.078328", "module": "PLC_Attack", "event": "Start", "details": "Targeting PLC at 192.168.1.50:502", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:12.878747", "module": "PLC_Attack", "event": "Recon", "details": "Identified Siemens S7-1200", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:14.479906", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40005 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:15.080255", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40006 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:15.680749", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40010 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T20:46:15.681096", "module": "PLC_Attack", "event": "Impact", "details": "Safety systems disabled, turbine overspeed", "status": "INFO"}
+{"timestamp": "2025-12-01T20:52:27.798394", "module": "PortScanner", "event": "Start", "details": "Scanning 192.168.1.50 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T20:52:29.298787", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:52:29.299665", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T20:52:30.600199", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:52:31.901166", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:52:32.687291", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:17.326928", "module": "BruteForce", "event": "Start", "details": "Target: 192.168.1.50:22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:18.327129", "module": "BruteForce", "event": "Info", "details": "Running in SIMULATION mode (no real connection)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:18.327322", "module": "BruteForce", "event": "Attempt", "details": "Trying root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:19.127473", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:19.127649", "module": "BruteForce", "event": "Attempt", "details": "Trying root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:19.927819", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:19.928092", "module": "BruteForce", "event": "Attempt", "details": "Trying user/admin", "status": "INFO"}
+{"timestamp": "2025-12-01T20:53:21.128268", "module": "BruteForce", "event": "Success", "details": "Credentials found: user/admin", "status": "SUCCESS"}
+{"timestamp": "2025-12-01T20:53:21.128420", "module": "BruteForce", "event": "End", "details": "Credentials found", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:16.678895", "module": "BruteForce", "event": "Start", "details": "Target: 192.168.1.50:22", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:17.679124", "module": "BruteForce", "event": "Info", "details": "Running in SIMULATION mode (no real connection)", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:17.679376", "module": "BruteForce", "event": "Attempt", "details": "Trying root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:18.479560", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:18.479869", "module": "BruteForce", "event": "Attempt", "details": "Trying root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:19.280152", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:19.280399", "module": "BruteForce", "event": "Attempt", "details": "Trying user/admin", "status": "INFO"}
+{"timestamp": "2025-12-01T20:55:20.480579", "module": "BruteForce", "event": "Success", "details": "Credentials found: user/admin", "status": "SUCCESS"}
+{"timestamp": "2025-12-01T20:55:20.480813", "module": "BruteForce", "event": "End", "details": "Credentials found", "status": "INFO"}
+{"timestamp": "2025-12-01T21:23:50.177431", "module": "PortScanner", "event": "Start", "details": "Scanning 192.168.1.50 ports [22, 80, 443]", "status": "INFO"}
+{"timestamp": "2025-12-01T21:23:51.677829", "module": "PortScanner", "event": "Attempt", "details": "Scapy scanning port 22", "status": "INFO"}
+{"timestamp": "2025-12-01T21:23:51.678351", "module": "PortScanner", "event": "Error", "details": "Scapy scan failed/impaired: [Errno 1] Operation not permitted. Falling back to Socket.", "status": "WARNING"}
+{"timestamp": "2025-12-01T21:23:52.979073", "module": "PortScanner", "event": "Result", "details": "Port 22 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T21:23:54.280105", "module": "PortScanner", "event": "Result", "details": "Port 80 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T21:23:55.055164", "module": "PortScanner", "event": "Result", "details": "Port 443 is Closed (Socket)", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:11.234619", "module": "BruteForce", "event": "Start", "details": "Target: 192.168.1.50:22", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:12.234848", "module": "BruteForce", "event": "Info", "details": "Running in SIMULATION mode (no real connection)", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:12.235059", "module": "BruteForce", "event": "Attempt", "details": "Trying root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:13.035191", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/password", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:13.035364", "module": "BruteForce", "event": "Attempt", "details": "Trying root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:13.835529", "module": "BruteForce", "event": "Failed", "details": "Invalid: root/123456", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:13.835659", "module": "BruteForce", "event": "Attempt", "details": "Trying user/admin", "status": "INFO"}
+{"timestamp": "2025-12-01T21:27:15.035804", "module": "BruteForce", "event": "Success", "details": "Credentials found: user/admin", "status": "SUCCESS"}
+{"timestamp": "2025-12-01T21:27:15.035947", "module": "BruteForce", "event": "End", "details": "Credentials found", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:25.665554", "module": "PLC_Attack", "event": "Start", "details": "Targeting PLC at 192.168.1.50:502", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:27.465909", "module": "PLC_Attack", "event": "Recon", "details": "Identified Siemens S7-1200", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:29.066780", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40005 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:29.667023", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40006 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:30.267274", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40010 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:30:30.267421", "module": "PLC_Attack", "event": "Impact", "details": "Safety systems disabled, turbine overspeed", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:09.702712", "module": "PLC_Attack", "event": "Start", "details": "Targeting PLC at 192.168.1.50:502", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:11.503074", "module": "PLC_Attack", "event": "Recon", "details": "Identified Siemens S7-1200", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:13.103889", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40005 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:13.704150", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40006 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:14.304402", "module": "PLC_Attack", "event": "Exploit", "details": "Overwrote Register 40010 with unsafe value", "status": "INFO"}
+{"timestamp": "2025-12-01T21:51:14.304538", "module": "PLC_Attack", "event": "Impact", "details": "Safety systems disabled, turbine overspeed", "status": "INFO"}

