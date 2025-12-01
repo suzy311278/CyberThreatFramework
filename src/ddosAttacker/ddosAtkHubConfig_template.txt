@@ -1,6 +1,0 @@
-# This is the config file template for the module <ddosAtkHubApp.py>
-# Setup the paramter with below format (every line follows <key>:<val> format, the
-# key can not be changed):
-
-# Test mode flag
-TEST_MD:True
