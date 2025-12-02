@@ -1,10 +1,17 @@
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')  # Set backend to Agg for headless environments
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
 
 class ThreatVisualizer:
-    def __init__(self, log_dir="src/CyberThreatFramework/logs"):
+    def __init__(self, log_dir=None):
+        if log_dir is None:
+            # Default to absolute path relative to this file
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            log_dir = os.path.join(base_dir, "logs")
+            
         self.log_file = os.path.join(log_dir, "simulation_log.csv")
         
     def plot_activity(self):

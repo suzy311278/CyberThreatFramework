@@ -5,7 +5,12 @@ import os
 from datetime import datetime
 
 class ThreatLogger:
-    def __init__(self, log_dir="src/CyberThreatFramework/logs"):
+    def __init__(self, log_dir=None):
+        if log_dir is None:
+            # Default to absolute path relative to this file
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            log_dir = os.path.join(base_dir, "logs")
+
         self.log_dir = log_dir
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
